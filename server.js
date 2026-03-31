@@ -19,7 +19,7 @@ const PORT = app.get('port');
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-app.use(serveFavicon(path.join(__dirname, '/public/images/favicon.ico')));
+
 app.use(morgan('dev'));
 app.use(express.static('public'));
 app.use(express.urlencoded({extended: true}));
