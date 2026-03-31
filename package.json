@@ -1,0 +1,38 @@
+{
+  "name": "godrive",
+  "version": "1.0.0",
+  "description": "Car Agency System",
+  "keywords": [
+    "Car",
+    "Agency",
+    "Drive",
+    "Go"
+  ],
+  "homepage": "https://github.com/Mohamedkhaled81/GoDrive-BE#readme",
+  "bugs": {
+    "url": "https://github.com/Mohamedkhaled81/GoDrive-BE/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Mohamedkhaled81/GoDrive-BE.git"
+  },
+  "license": "ISC",
+  "author": "MK - OE - MN - MA - HA",
+  "type": "module",
+  "main": "server.js",
+  "scripts": {
+    "dev": "nodemon server.js",
+    "prod": "node server.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "dependencies": {
+    "dotenv": "^17.3.1",
+    "express": "^5.2.1",
+    "express-validator": "^7.3.1",
+    "mongoose": "^9.3.3",
+    "morgan": "^1.10.1"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.14"
+  }
+}
