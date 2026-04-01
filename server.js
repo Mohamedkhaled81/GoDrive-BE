@@ -35,7 +35,7 @@ app.use(globalErrorHandler);
 mongoose.connection.once('open', () => {
     console.log('Connected to MongoDb :D');
     app.listen(PORT, () => {
-        const servStatus = `Server Started at PORT ${PORT} :D`
+        const servStatus = `Server Started at http://localhost:${PORT}/ :D`
         console.log(servStatus);
     });
 });
