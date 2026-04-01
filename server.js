@@ -21,21 +21,25 @@ const __dirname = path.dirname(__filename);
 
 
 app.use(morgan('dev'));
-app.use(express.static('public'));
+// app.use(express.static('public'));
 app.use(express.urlencoded({extended: true}));
 app.use(express.json());
 
 // Routers
-app.use('/', rootRouter);
+// app.use('/', rootRouter);
+// Test route
+app.get('/', (req, res) => {
+  res.send('API is running 🚀');
+});
 
 // Global Custom-ErrorHandler
-app.use(globalErrorHandler);
+// app.use(globalErrorHandler);
 
 // Once The MongoDb is On We start the server..
 mongoose.connection.once('open', () => {
     console.log('Connected to MongoDb :D');
     app.listen(PORT, () => {
-        const servStatus = `Server Started at PORT ${PORT} :D`
+        const servStatus = `Server Started at PORT http://localhost:${PORT} 😁`
         console.log(servStatus);
     });
 });
