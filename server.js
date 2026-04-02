@@ -29,10 +29,11 @@ app.use(express.json());
 // Routers
 // app.use('/', rootRouter);
 // Test route
-app.get('/', (req, res) => {
-  res.send('API is running 🚀');
-});
-
+// app.get('/', (req, res) => {
+    //   res.send('API is running 🚀');
+    // });
+app.use('/api/auth', authRoutes);
+    
 // Global Custom-ErrorHandler
 // app.use(globalErrorHandler);
 
