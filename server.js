@@ -21,7 +21,6 @@ const __dirname = path.dirname(__filename);
 
 
 app.use(morgan('dev'));
-app.use(express.static('public'));
 app.use(express.urlencoded({extended: true}));
 app.use(express.json());
 
