@@ -5,22 +5,23 @@ import { hashPassword, comparePassword } from '../utils/hash.js';
 import { generateOTP } from '../utils/otp.js';
 import { generateToken } from '../utils/jwt.js';
 import { isValidPassword } from '../utils/passwordValidator.js';
+import { sendOTPEmail } from './mail.service.js';
 
-
-const createOTP = async (userId, type) => {
-
-  await OTP.deleteMany({ userId, type });
+const createOTP = async (user, type) => {
+  await OTP.deleteMany({ userId: user._id, type });
 
   const code = generateOTP();
 
-  const otp = await OTP.create({
-    userId,
+  await OTP.create({
+    userId: user._id,
     code,
     type,
-    expiresAt: new Date(Date.now() + 5 * 60 * 1000), // 5 minutes
+    expiresAt: new Date(Date.now() + 5 * 60 * 1000),
   });
 
-  return otp;
+  await sendOTPEmail(user.email, code, type);
+
+  return code;
 };
 
 
@@ -67,7 +68,7 @@ export const authService = {
     });
 
     
-    await createOTP(user._id, 'verify');
+    await createOTP(user, 'verify');
 
     return { message: 'OTP sent to email for verification' };
   },
@@ -107,7 +108,7 @@ export const authService = {
     }
 
   
-    await createOTP(user._id, 'login');
+    await createOTP(user, 'login');
 
     return { message: 'OTP sent to email' };
   },
@@ -138,7 +139,7 @@ export const authService = {
       throw new Error('User not found');
     }
 
-    await createOTP(user._id, 'reset');
+    await createOTP(user, 'reset');
 
     return { message: 'OTP sent to email' };
   },
