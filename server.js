@@ -8,6 +8,7 @@ import rootRouter from './src/routes/index.js';
 import { fileURLToPath } from 'url';
 import globalErrorHandler from './src/middlewares/globalError.js'
 import path from 'path';
+import userRoutes from './routes/user.routes.js';
 
 dotenv.config();
 
@@ -33,7 +34,7 @@ app.use(express.json());
     //   res.send('API is running 🚀');
     // });
 app.use('/api/auth', authRoutes);
-    
+app.use('/api/user', userRoutes);
 // Global Custom-ErrorHandler
 // app.use(globalErrorHandler);
 
