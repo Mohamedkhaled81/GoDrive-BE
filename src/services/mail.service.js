@@ -1,5 +1,7 @@
 // import sgMail from "@sendgrid/mail";
 import { transporter } from '../config/mail.js';
+import dotenv from 'dotenv';
+dotenv.config()
 
 export const sendOTPEmail = async (email, code, type) => {
   // sgMail.setApiKey(process.env.sendGrid);

@@ -31,7 +31,7 @@ const transporter = nodemailer.createTransport({
 
 await transporter.sendMail({
   from: process.env.EMAIL_USER,
-  to: process.env.EMAIL_USER,
+  to: "marionasef22@gmail.com",
   subject: 'Test',
   text: 'Hello',
 });
