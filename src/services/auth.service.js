@@ -1,11 +1,11 @@
-import User from '../models/user.model.js';
-import OTP from '../models/otp.model.js';
+import User from "../models/user.model.js";
+import OTP from "../models/otp.model.js";
 
-import { hashPassword, comparePassword } from '../utils/hash.js';
-import { generateOTP } from '../utils/otp.js';
-import { generateToken } from '../utils/jwt.js';
-import { isValidPassword } from '../utils/passwoedValidator.js';
-import { sendOTPEmail } from './mail.service.js';
+import { hashPassword, comparePassword } from "../utils/hash.js";
+import { generateOTP } from "../utils/otp.js";
+import { generateToken } from "../utils/jwt.js";
+import { isValidPassword } from "../utils/passwoedValidator.js";
+import { sendOTPEmail } from "./mail.service.js";
 
 const createOTP = async (user, type) => {
   await OTP.deleteMany({ userId: user._id, type });
@@ -24,19 +24,17 @@ const createOTP = async (user, type) => {
   return code;
 };
 
-
 const verifyOTP = async (userId, code, type) => {
   const otp = await OTP.findOne({ userId, code, type });
 
   if (!otp) {
-    throw new Error('Invalid OTP');
+    throw new Error("Invalid OTP");
   }
 
   if (otp.expiresAt < new Date()) {
     await OTP.deleteOne({ _id: otp._id });
-    throw new Error('OTP expired');
+    throw new Error("OTP expired");
   }
-
 
   await OTP.deleteOne({ _id: otp._id });
 
@@ -44,82 +42,79 @@ const verifyOTP = async (userId, code, type) => {
 };
 
 export const authService = {
-
-  
   async register(email, password) {
-  
     const existingUser = await User.findOne({ email });
     if (existingUser) {
-      throw new Error('Email already exists');
+      throw new Error("Email already exists");
     }
 
-    
     if (!isValidPassword(password)) {
-      throw new Error('Weak password');
+      throw new Error("Weak password");
     }
-
 
     const hashedPassword = await hashPassword(password);
 
-    
     const user = await User.create({
       email,
       password: hashedPassword,
     });
-    
-    await createOTP(user, 'verify');
-    
-    return { message: 'OTP sent to email for verification' };
+
+    await createOTP(user, "verify");
+
+    return { message: "OTP sent to email for verification" };
   },
 
-  
   async verifyAccount(email, code) {
     const user = await User.findOne({ email });
 
     if (!user) {
-      throw new Error('User not found');
+      throw new Error("User not found");
     }
 
-    await verifyOTP(user._id, code, 'verify');
+    await verifyOTP(user._id, code, "verify");
 
     user.isVerified = true;
     await user.save();
+    
+    // generate token
+    const token = generateToken({
+      userId: user._id,
+      role: user.role,
+    });
 
-    return { message: 'Account verified successfully' };
+    return { token };
   },
-
 
   async login(email, password) {
     const user = await User.findOne({ email });
 
     if (!user) {
-      throw new Error('Invalid credentials');
+      throw new Error("Invalid credentials");
     }
 
     const isMatch = await comparePassword(password, user.password);
 
     if (!isMatch) {
-      throw new Error('Invalid credentials');
+      throw new Error("Invalid credentials");
     }
 
     if (!user.isVerified) {
-      throw new Error('Account not verified');
+      throw new Error("Account not verified");
     }
 
-  
-    await createOTP(user, 'login');
+    await createOTP(user, "login");
 
-    return { message: 'OTP sent to email' };
+    return { message: "OTP sent to email" };
   },
 
   async verifyLogin(email, code) {
     const user = await User.findOne({ email });
 
     if (!user) {
-      throw new Error('User not found');
+      throw new Error("User not found");
     }
 
-    await verifyOTP(user._id, code, 'login');
+    await verifyOTP(user._id, code, "login");
 
     // generate token
     const token = generateToken({
@@ -130,36 +125,34 @@ export const authService = {
     return { token };
   },
 
-  
   async forgotPassword(email) {
     const user = await User.findOne({ email });
 
     if (!user) {
-      throw new Error('User not found');
+      throw new Error("User not found");
     }
 
-    await createOTP(user, 'reset');
+    await createOTP(user, "reset");
 
-    return { message: 'OTP sent to email' };
+    return { message: "OTP sent to email" };
   },
 
-  
   async resetPassword(email, code, newPassword) {
     const user = await User.findOne({ email });
 
     if (!user) {
-      throw new Error('User not found');
+      throw new Error("User not found");
     }
 
-    await verifyOTP(user._id, code, 'reset');
+    await verifyOTP(user._id, code, "reset");
 
     if (!isValidPassword(newPassword)) {
-      throw new Error('Weak password');
+      throw new Error("Weak password");
     }
 
     user.password = await hashPassword(newPassword);
     await user.save();
 
-    return { message: 'Password reset successful' };
-  }
+    return { message: "Password reset successful" };
+  },
 };
