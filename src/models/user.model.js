@@ -1,11 +1,7 @@
-import { Schema, model } from "mongoose";
+import mongoose from "mongoose";
 
-const userSchema = new Schema(
+const userSchema = new mongoose.Schema(
     {
-        name: {
-            type: String,
-            required: true,
-        },
         email: {
             type: String,
             required: true,
@@ -15,18 +11,17 @@ const userSchema = new Schema(
             type: String,
             required: true,
         },
-        phone: {
-            type: String,
-            required: true,
-        },
         role: {
             type: String,
-            enum: ["user", "guest", "admin"],
+            enum: ["user", "admin"],
             default: "user",
         },
-        profileImage: String,
+        isVerified: {
+            type: Boolean,
+            default: false,
+        },
     },
     { timestamps: true },
 );
 
-export default model("User", userSchema);
+export default mongoose.model("User", userSchema);
