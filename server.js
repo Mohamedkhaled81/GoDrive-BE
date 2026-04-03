@@ -2,13 +2,13 @@ import express from 'express';
 import dotenv from 'dotenv';
 import morgan from 'morgan';
 import mongoose from 'mongoose';
-import authRoutes from './routes/auth.routes.js';
+import authRoutes from './src/routes/auth.routes.js';
 import { connectDb } from './src/config/dbConfig.js';
 import rootRouter from './src/routes/index.js';
 import { fileURLToPath } from 'url';
 import globalErrorHandler from './src/middlewares/globalError.js'
 import path from 'path';
-import userRoutes from './routes/user.routes.js';
+import userRoutes from './src/routes/user.routes.js';
 
 dotenv.config();
 

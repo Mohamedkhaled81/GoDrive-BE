@@ -4,7 +4,7 @@ import OTP from '../models/otp.model.js';
 import { hashPassword, comparePassword } from '../utils/hash.js';
 import { generateOTP } from '../utils/otp.js';
 import { generateToken } from '../utils/jwt.js';
-import { isValidPassword } from '../utils/passwordValidator.js';
+import { isValidPassword } from '../utils/passwoedValidator.js';
 import { sendOTPEmail } from './mail.service.js';
 
 const createOTP = async (user, type) => {
@@ -61,15 +61,14 @@ export const authService = {
 
     const hashedPassword = await hashPassword(password);
 
-   
+    
     const user = await User.create({
       email,
       password: hashedPassword,
     });
-
     
     await createOTP(user, 'verify');
-
+    
     return { message: 'OTP sent to email for verification' };
   },
 
