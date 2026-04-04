@@ -1,19 +1,21 @@
+import { userRole } from "../../constants/roleEnum.js";
+
 // roomId is userId < client: who needs support.. >
 export default (io, socket) => {
 
-  socket.on("makeRoom", (userId, ack) => {
+  socket.on("makeRoom", (data, ack) => {
     try {
       const admins = io.sockets.adapter.rooms.get("roomAdmin");
 
       if (!admins || admins.size === 0) {
-        const error = "Can't Respond to Customer Support Right Now";
-        return ack?.({
-          success: false,
-          message: error
-        });
+        throw new Error("Can't Respond to Customer Support Right Now");
       }
 
-      socket.join(userId);
+      if(socket.user.role !== userRole.CUSTOMER) {
+        throw new Error("Unauthorized");
+      }
+
+      socket.join(roomId);
       io.to("roomAdmin").emit("newRoom", { userId });
 
       ack?.({
@@ -26,13 +28,15 @@ export default (io, socket) => {
     }
   });
 
-  socket.on("leave", ({ userName, roomId }, ack) => {
+  // data is {roomId}
+  socket.on("leave", (data, ack) => {
     try {
-      socket.leave(roomId);
+        const {roomId} = data; 
+        socket.leave(roomId);
 
-      io.to(roomId).emit("userLeft", `${userName} Left the chat!`);
+        io.to(roomId).emit("userLeft", `${socket.user.role} Left the chat!`);
 
-      ack?.({ success: true });
+        ack?.({ success: true });
 
     } catch (err) {
       ack?.({ success: false, message: err.message });

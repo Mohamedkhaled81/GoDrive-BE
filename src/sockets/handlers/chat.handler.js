@@ -7,7 +7,7 @@ export default (io, socket) => {
         timestamp: new Date().toISOString()
       };
 
-      io.to(roomId).emit("newMsg", { roomId, data });
+      io.to(roomId).emit("newMsg", { data });
 
       ack?.({
         success: true,
