@@ -1,5 +1,6 @@
 import Order from "../models/order.model.js";
 import Car from "../models/car.model.js";
+import UserProfile from "../models/userProfile.js";
 import CustomError from "../utils/customError.js";
 
 //create order
@@ -40,7 +41,7 @@ export const createOrder = async (req, res, next) => {
         const totalPrice = days * car.pricePerDay;
 
         const order = await Order.create({
-            userId: req.user.userId,
+            userId: req.user._id,
             carId,
             fromDate: start,
             toDate: end,
@@ -59,34 +60,66 @@ export const createOrder = async (req, res, next) => {
 
 export const confirmOrder = async (req, res, next) => {
     try {
+        // 1. Find the order
         const order = await Order.findById(req.params.id);
         if (!order) return next(new CustomError("Order not found", 404));
 
-        const isStillAvailable = await Order.findOne({
+        // 2. Prevent multi-confirm or processing cancelled orders
+        if (order.status !== "pending") {
+            return next(
+                new CustomError(`Order is already ${order.status}`, 400),
+            );
+        }
+
+        // 3. Check if the car is still available (Overlap check)
+        const isAlreadyBooked = await Order.findOne({
             _id: { $ne: order._id },
             carId: order.carId,
             status: "confirmed",
-            $or: [
-                {
-                    fromDate: { $lte: order.toDate },
-                    toDate: { $gte: order.fromDate },
-                },
-            ],
+            fromDate: { $lte: order.toDate },
+            toDate: { $gte: order.fromDate },
         });
 
-        if (isStillAvailable) {
+        if (isAlreadyBooked) {
             return next(
                 new CustomError(
-                    "Sorry, another order was confirmed for this car in the same period",
+                    "Car is no longer available for these dates",
                     400,
                 ),
             );
         }
-        // todo: check user profile balance
+
+        // 4. Check User Balance
+        const profile = await UserProfile.findOne({ userId: order.userId });
+
+        if (!profile)
+            return next(new CustomError("User profile not found", 404));
+
+        if (profile.balance < order.totalPrice) {
+            // Logic: If balance is low, cancel the order
+            order.status = "cancelled";
+            await order.save();
+
+            return res.status(400).json({
+                success: false,
+                message: "Insufficient balance. Order has been cancelled.",
+                order,
+            });
+        }
+
+        // 5. Confirm the Order
         order.status = "confirmed";
+
+        profile.balance -= order.totalPrice;
+        await profile.save();
+
         await order.save();
 
-        res.json({ success: true, message: "Order confirmed", order });
+        res.json({
+            success: true,
+            message: "Order confirmed successfully",
+            order,
+        });
     } catch (error) {
         next(error);
     }
@@ -94,7 +127,7 @@ export const confirmOrder = async (req, res, next) => {
 
 export const getMyOrders = async (req, res, next) => {
     try {
-        const orders = await Order.find({ userId: req.user.userId }).populate(
+        const orders = await Order.find({ userId: req.user._id }).populate(
             "carId",
         );
 

@@ -12,7 +12,7 @@ const router = express.Router();
 
 router.use(authMiddleware);
 
-router.post("/", createOrder);
+router.post("/", createOrderValidator, createOrder);
 
 router.get("/my-orders", getMyOrders);
 
