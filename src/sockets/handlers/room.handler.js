@@ -1,6 +1,7 @@
 export default (io, socket) => {
 
-  socket.on("makeRoom", (userId) => {
+  // roomId is userId < client: who needs support.. >
+  socket.on("makeRoom", (roomId) => {
     const admins = io.sockets.adapter.rooms.get("roomAdmin");
 
     if (!admins || admins.size === 0) {
@@ -10,13 +11,13 @@ export default (io, socket) => {
       return;
     }
 
-    socket.join(userId);
-    io.to("roomAdmin").emit("newRoom", { userId });
+    socket.join(roomId);
+    io.to("roomAdmin").emit("newRoom", { roomId });
   });
 
-  socket.on("leave", ({ userId, roomId }) => {
+  socket.on("leave", ({ userName, roomId }) => {
     socket.leave(roomId);
-    io.to(roomId).emit("userLeft", { userId });
+    io.to(roomId).emit("userLeft", `${userName} has left the chat!`);
   });
 
 };
