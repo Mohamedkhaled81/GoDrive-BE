@@ -40,7 +40,7 @@ export const createOrder = async (req, res, next) => {
         const totalPrice = days * car.pricePerDay;
 
         const order = await Order.create({
-            userId: req.user._id,
+            userId: req.user.userId,
             carId,
             fromDate: start,
             toDate: end,
@@ -82,7 +82,7 @@ export const confirmOrder = async (req, res, next) => {
                 ),
             );
         }
-
+        // todo: check user profile balance
         order.status = "confirmed";
         await order.save();
 
@@ -94,7 +94,7 @@ export const confirmOrder = async (req, res, next) => {
 
 export const getMyOrders = async (req, res, next) => {
     try {
-        const orders = await Order.find({ userId: req.user._id }).populate(
+        const orders = await Order.find({ userId: req.user.userId }).populate(
             "carId",
         );
 
