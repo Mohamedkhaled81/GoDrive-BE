@@ -10,6 +10,7 @@ import path from "path";
 import { createServer } from "http";
 import { Server } from "socket.io";
 import handSocketIo from "./src/sockets/index.js"
+import handleAuthSocket from "./src/sockets/middlewares/auth.middleware.js"
 
 dotenv.config();
 
@@ -35,6 +36,7 @@ const __dirname = path.dirname(__filename);
 app.use(morgan("dev"));
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
+io.use(handleAuthSocket);
 
 // Routers
 app.use("/", rootRouter);
