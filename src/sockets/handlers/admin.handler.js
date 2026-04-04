@@ -16,12 +16,12 @@ export default (io, socket) => {
     }
   });
 
-  socket.on("adminJoined", ({ adminId, roomId }, ack) => {
+  socket.on("adminJoined", ({ adminName, roomId }, ack) => {
     try {
       socket.join(roomId);
 
       io.to(roomId).emit("welcomeMsg", {
-        message: `Admin Joined ${adminId.slice(0, 5)}`,
+        message: `Admin Joined ${adminName}`,
         timestamp: new Date().toISOString()
       });
 

@@ -7,9 +7,6 @@ export default (io, socket) => {
 
       if (!admins || admins.size === 0) {
         const error = "Can't Respond to Customer Support Right Now";
-
-        socket.emit("error", { message: error });
-
         return ack?.({
           success: false,
           message: error
