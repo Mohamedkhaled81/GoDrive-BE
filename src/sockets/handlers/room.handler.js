@@ -1,23 +1,45 @@
+// roomId is userId < client: who needs support.. >
 export default (io, socket) => {
 
-  // roomId is userId < client: who needs support.. >
-  socket.on("makeRoom", (roomId) => {
-    const admins = io.sockets.adapter.rooms.get("roomAdmin");
+  socket.on("makeRoom", (userId, ack) => {
+    try {
+      const admins = io.sockets.adapter.rooms.get("roomAdmin");
 
-    if (!admins || admins.size === 0) {
-      socket.emit("noAdminSupport", {
-        message: "Can't Respond to Customer Support Right Now",
+      if (!admins || admins.size === 0) {
+        const error = "Can't Respond to Customer Support Right Now";
+
+        socket.emit("error", { message: error });
+
+        return ack?.({
+          success: false,
+          message: error
+        });
+      }
+
+      socket.join(userId);
+      io.to("roomAdmin").emit("newRoom", { userId });
+
+      ack?.({
+        success: true,
+        roomId: userId
       });
-      return;
-    }
 
-    socket.join(roomId);
-    io.to("roomAdmin").emit("newRoom", { roomId });
+    } catch (err) {
+      ack?.({ success: false, message: err.message });
+    }
   });
 
-  socket.on("leave", ({ userName, roomId }) => {
-    socket.leave(roomId);
-    io.to(roomId).emit("userLeft", `${userName} has left the chat!`);
+  socket.on("leave", ({ userName, roomId }, ack) => {
+    try {
+      socket.leave(roomId);
+
+      io.to(roomId).emit("userLeft", `${userName} Left the chat!`);
+
+      ack?.({ success: true });
+
+    } catch (err) {
+      ack?.({ success: false, message: err.message });
+    }
   });
 
 };
