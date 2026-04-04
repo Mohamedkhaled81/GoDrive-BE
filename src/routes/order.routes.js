@@ -7,6 +7,7 @@ import {
 } from "../controllers/order.controller.js";
 import { authMiddleware } from "../middlewares/auth.middleware.js";
 import { authorize } from "../middlewares/role.middleware.js";
+import { createOrderValidator } from "../validators/order.validator.js";
 
 const router = express.Router();
 
