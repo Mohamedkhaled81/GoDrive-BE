@@ -22,7 +22,7 @@ export const authController = {
     }
   },
 
- 
+
   async verifyAccount(req, res) {
     try {
       const { email, code } = req.body;
@@ -35,7 +35,7 @@ export const authController = {
     }
   },
 
- 
+
   async login(req, res) {
     try {
       const { email, password } = req.body;

@@ -18,7 +18,7 @@
 //     { timestamps: true },
 // );
 
-export default model("OTP", otpSchema);
+// export default model("OTP", otpSchema);
 import mongoose from 'mongoose';
 
 const otpSchema = new mongoose.Schema({
@@ -52,4 +52,4 @@ otpSchema.index({ userId: 1, type: 1 }, { unique: true });
 
 const OTP = mongoose.model('OTP', otpSchema);
 
-// export default OTP;
+export default OTP;

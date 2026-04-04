@@ -3,24 +3,15 @@ import dotenv from "dotenv";
 import morgan from "morgan";
 import mongoose from "mongoose";
 import { connectDb } from "./src/config/dbConfig.js";
-import rootRouter from "./src/routes/index.js";
 import { fileURLToPath } from "url";
 import globalErrorHandler from "./src/middlewares/globalError.js";
 import path from "path";
 
-import userProfileRouter from "./src/routes/userProfile.routes.js";
+import rootRouter from "./src/routes/index.js";
 import carRouter from "./src/routes/car.routes.js";
-import express from 'express';
-import dotenv from 'dotenv';
-import morgan from 'morgan';
-import mongoose from 'mongoose';
 import authRoutes from './src/routes/auth.routes.js';
-import { connectDb } from './src/config/dbConfig.js';
-import rootRouter from './src/routes/index.js';
-import { fileURLToPath } from 'url';
-import globalErrorHandler from './src/middlewares/globalError.js'
-import path from 'path';
 import userRoutes from './src/routes/user.routes.js';
+import userProfileRouter from "./src/routes/userProfile.routes.js";
 
 dotenv.config();
 
@@ -54,10 +45,10 @@ app.use("/goDrive/cars", carRouter);
 // app.get('/', (req, res) => {
     //   res.send('API is running 🚀');
     // });
-app.use('/api/auth', authRoutes);
-app.use('/api/user', userRoutes);
+app.use('/goDrive/auth', authRoutes);
+app.use('/goDrive/user', userRoutes);
 // Global Custom-ErrorHandler
-// app.use(globalErrorHandler);
+app.use(globalErrorHandler);
 
 // Once The MongoDb is On We start the server..
 mongoose.connection.once("open", () => {

@@ -15,9 +15,13 @@ import {
     updateProfileValidator,
 } from "../validators/userProfile.validator.js";
 
+import { authMiddleware } from "../middlewares/auth.middleware.js";
+
+router.use(authMiddleware);
+
 router
     .route("/")
-    .get(validateRequest, getProfile)
+    .get(getProfile)
     .post(createProfileValidator, validateRequest, createProfile)
     .patch(updateProfileValidator, validateRequest, updateProfile)
     .delete(deleteProfile);

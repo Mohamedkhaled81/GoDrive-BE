@@ -11,7 +11,6 @@ const createOTP = async (user, type) => {
   await OTP.deleteMany({ userId: user._id, type });
 
   const code = generateOTP();
-
   await OTP.create({
     userId: user._id,
     code,

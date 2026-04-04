@@ -16,15 +16,30 @@ import {
     updateCarValidator,
 } from "../validators/car.validator.js";
 
+import { authMiddleware } from "../middlewares/auth.middleware.js";
+import { authorize } from "../middlewares/role.middleware.js";
+
 router
     .route("/")
-    .get(getAllCars)
-    .post(createCarValidator, validateRequest, createCar);
+    .get(getAllCars, validateRequest)
+    .post(
+        authMiddleware,
+        authorize("admin"),
+        createCarValidator,
+        validateRequest,
+        createCar,
+    );
 
 router
     .route("/:carId")
-    .get(getCar)
-    .patch(updateCarValidator, validateRequest, updateCar)
-    .delete(deleteCar);
+    .get(getCar, validateRequest)
+    .patch(
+        authMiddleware,
+        authorize("admin"),
+        updateCarValidator,
+        validateRequest,
+        updateCar,
+    )
+    .delete(authMiddleware, authorize("admin"), deleteCar);
 
 export default router;

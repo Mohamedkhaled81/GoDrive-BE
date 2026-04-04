@@ -14,7 +14,7 @@ export const getCar = asyncHandler(async (req, res) => {
 });
 
 export const createCar = asyncHandler(async (req, res) => {
-    const car = await createCarService("69cf8fb3ffdd70aef8de5573", req.body);
+    const car = await createCarService(req.user.userId, req.body);
     res.status(201).json({ car });
 });
 
