@@ -4,9 +4,9 @@ import dotenv from 'dotenv';
 dotenv.config()
 
 export const sendOTPEmail = async (email, code, type) => {
-  // sgMail.setApiKey(process.env.sendGrid);
-  // console.log('EMAIL_USER:', process.env.EMAIL_USER);
-  // console.log('EMAIL_PASS:', process.env.EMAIL_PASSWORD);
+  // sgMail.setApiKey(process..env.sendGrid);
+  // console.log('EMAIL_USER:', process..env.EMAIL_USER);
+  // console.log('EMAIL_PASS:', process..env.EMAIL_PASSWORD);
   let subject = "";
   let text = "";
 
@@ -34,7 +34,7 @@ export const sendOTPEmail = async (email, code, type) => {
 
   // const msg = {
   //   to: email,
-  //   from: process.env.EMAIL_USER,
+  //   from: process..env.EMAIL_USER,
     
   //   subject,
   //   text,

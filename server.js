@@ -13,10 +13,13 @@ import userRoutes from './src/routes/user.routes.js';
 import userProfileRouter from "./src/routes/userProfile.routes.js";
 
 dotenv.config();
+import dns from "node:dns/promises";
+import chatbotRoutes from "./src/routes/chatbot.routes.js";
+
+dns.setServers(["1.1.1.1"]);
 
 const app = express();
 connectDb();
-
 app.set("port", process.env.PORT || 5050);
 
 const PORT = app.get("port");
@@ -32,7 +35,7 @@ app.use('/goDrive/user', userRoutes);
 app.use("/goDrive/profile", userProfileRouter);
 app.use("/goDrive/cars", carRouter);
 app.use('/goDrive/orders', orderRouter);
-
+app.use('/goDrive/chatbot',chatbotRoutes)
 // Global Custom-ErrorHandler
 app.use(globalErrorHandler);
 
