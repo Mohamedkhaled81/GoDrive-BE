@@ -3,9 +3,10 @@ import { userRole } from "../../constants/roleEnum.js";
 // roomId is userId < client: who needs support.. >
 export default (io, socket) => {
 
-  socket.on("makeRoom", (data, ack) => {
+  socket.on("makeRoom", (temp, ack) => {
     try {
       const admins = io.sockets.adapter.rooms.get("roomAdmin");
+      const roomId = socket.user.userId;
 
       if (!admins || admins.size === 0) {
         throw new Error("Can't Respond to Customer Support Right Now");
@@ -16,11 +17,11 @@ export default (io, socket) => {
       }
 
       socket.join(roomId);
-      io.to("roomAdmin").emit("newRoom", { userId });
+      io.to("roomAdmin").emit("newRoom", { roomId });
 
       ack?.({
         success: true,
-        roomId: userId
+        roomId: roomId
       });
 
     } catch (err) {

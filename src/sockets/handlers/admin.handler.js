@@ -20,11 +20,20 @@ export default (io, socket) => {
     }
   });
 
-  socket.on("adminJoined", ({ roomId }, ack) => {
+  // data: {roomId} refers to userId
+  socket.on("adminJoined", (data, ack) => {
     try {
+      const {roomId} = data;
+      const roomExists = io.sockets.adapter.rooms.has(roomId);
+
       if(socket.user.role !== userRole.ADMIN) {
         throw new Error("Unauthorized");
       }
+
+      if(!roomExists) {
+        throw new Error("This room doesn't exist at the moment!");
+      }
+
       socket.join(roomId);
 
       io.to(roomId).emit("welcomeMsg", {
