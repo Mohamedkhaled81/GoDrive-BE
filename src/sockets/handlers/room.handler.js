@@ -1,8 +1,8 @@
 import { userRole } from "../../constants/roleEnum.js";
+import { roomSchema } from "../schemas/roomSchema.js";
 
-// roomId is userId < client: who needs support.. >
 export default (io, socket) => {
-
+  // roomId is userId < client: who needs support.. >
   socket.on("makeRoom", (temp, ack) => {
     try {
       const admins = io.sockets.adapter.rooms.get("roomAdmin");
@@ -32,10 +32,29 @@ export default (io, socket) => {
   // data is {roomId}
   socket.on("leave", (data, ack) => {
     try {
-        const {roomId} = data; 
+        const result = roomSchema.safeParse(data);
+
+        if (!result.success) {
+          throw new Error("Invalid payload");
+        }
+
+        const { roomId } = result.data;
+
+        // Check room exists
+        const room = io.sockets.adapter.rooms.get(roomId);
+
+        if (!room) {
+          throw new Error("Room does not exist");
+        }
+
+        // Check user is in room
+        if (!room.has(socket.id)) {
+          throw new Error("You are not in this room");
+        }
+
         socket.leave(roomId);
 
-        io.to(roomId).emit("userLeft", `${socket.user.role} Left the chat!`);
+        io.to(roomId).emit("userLeft", {data: `${socket.user.role} Left the chat!`});
 
         ack?.({ success: true });
 
