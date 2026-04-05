@@ -1,4 +1,5 @@
 import { userRole } from "../../constants/roleEnum.js";
+import { roomSchema } from "../schemas/roomSchema.js";
 
 export default (io, socket) => {
   socket.on("loginAsAdmin", (data, ack) => {
@@ -23,8 +24,14 @@ export default (io, socket) => {
   // data: {roomId} refers to userId
   socket.on("adminJoined", (data, ack) => {
     try {
-      const {roomId} = data;
-      const roomExists = io.sockets.adapter.rooms.has(roomId);
+      const result = roomSchema.safeParse(data);
+
+      if (!result.success) {
+        throw new Error("Invalid payload");
+      }
+
+      const { roomId } = result.data;
+      const roomExists = io.sockets.adapter.rooms.get(roomId);
 
       if(socket.user.role !== userRole.ADMIN) {
         throw new Error("Unauthorized");
