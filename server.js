@@ -3,7 +3,6 @@ import dotenv from "dotenv";
 import morgan from "morgan";
 import mongoose from "mongoose";
 import { connectDb } from "./src/config/dbConfig.js";
-import rootRouter from "./src/routes/index.js";
 import { fileURLToPath } from "url";
 import globalErrorHandler from "./src/middlewares/globalError.js";
 import path from "path";
@@ -44,7 +43,7 @@ app.use(express.json());
 io.use(handleAuthSocket);
 
 // Routers
-app.use("/", rootRouter);
+
 app.use('/goDrive/auth', authRoutes);
 app.use('/goDrive/user', userRoutes);
 app.use("/goDrive/profile", userProfileRouter);
