@@ -7,6 +7,7 @@ const validateRequest = function (req, res, next) {
         const BadReqErr = new CustomError(errors.array()[0]["msg"], 400);
         next(BadReqErr);
     }
+    console.log("first")
     next();
 }
 
