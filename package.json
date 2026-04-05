@@ -43,7 +43,8 @@
     "mongoose": "^9.3.3",
     "nodemailer": "^8.0.4",
     "socket.io": "^4.8.3",
-    "zod": "^4.3.6"
+    "zod": "^4.3.6",
+    "morgan": "^1.10.1"
   },
   "devDependencies": {
     "nodemon": "^3.1.14"
