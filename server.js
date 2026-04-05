@@ -11,7 +11,12 @@ import { createServer } from "http";
 import { Server } from "socket.io";
 import handSocketIo from "./src/sockets/index.js"
 import handleAuthSocket from "./src/sockets/middlewares/auth.middleware.js"
-
+import authRoutes from "./src/routes/auth.routes.js";
+import userRoutes from "./src/routes/user.routes.js";
+import chatbotRoutes from "./src/routes/chatbot.routes.js";
+import carRouter from "./src/routes/car.routes.js";
+import orderRouter from "./src/routes/order.routes.js";
+import userProfileRouter from "./src/routes/userProfile.routes.js";
 dotenv.config();
 
 const app = express();
@@ -40,7 +45,12 @@ io.use(handleAuthSocket);
 
 // Routers
 app.use("/", rootRouter);
-
+app.use('/goDrive/auth', authRoutes);
+app.use('/goDrive/user', userRoutes);
+app.use("/goDrive/profile", userProfileRouter);
+app.use("/goDrive/cars", carRouter);
+app.use('/goDrive/orders', orderRouter);
+app.use('/goDrive/chatbot',chatbotRoutes)
 // Global Custom-ErrorHandler
 app.use(globalErrorHandler);
 
